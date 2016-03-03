@@ -1,0 +1,13 @@
+{
+  "name": "configDOM",
+  "version": "0.0.0",
+  "description": "An experimental View library.",
+  "main": "index.js",
+  "author": "Ketih Showalter",
+  "license": "BSD-2-Clause",
+  "keywords": ["DOM"],
+  "repository" : {
+    "type": "git",
+    "url": "git@github.com:kshowalter/configdom.git"
+  }
+}
