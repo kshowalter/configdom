@@ -125,7 +125,9 @@ module.exports = function(id){
       meta: {}
     },
     load: function(newSpecs){
-      if( newSpecs.constructor === Object ){
+      if( ! newSpecs ){
+        console.warn('No specs received');
+      } else if( newSpecs.constructor === Object ){
         //newSpecs._id = 'r.0';
         this.specs = mkDOM(this.rootSpecs, newSpecs, this.specs);
       } else if(newSpecs.constructor === Array ){
