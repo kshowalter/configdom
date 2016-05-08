@@ -1,7 +1,7 @@
 var $ = require('SimpleDOM');
 
 var mkDOM = function mkDOM(config, dispatch){
-  var e = $(config.type);
+  var e = $(config.tag);
   var _id = config._id || 'r';
   config.title = _id;
 
@@ -26,7 +26,7 @@ var mkDOM = function mkDOM(config, dispatch){
   return e;
 };
 
-module.exports = function(id){
+module.exports = function(id){ // DOM id
   var C = {
     anchorID: id,
     dom: $(id),
