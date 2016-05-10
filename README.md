@@ -29,6 +29,8 @@ This sets the text content. Also works to insert raw HTML.
     becomes:
     <span>hello world</span>
 
+    // TODO: confirm this will override children and append if placed in config object after them.
+
 ### children
 
     {
