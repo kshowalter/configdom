@@ -1,6 +1,20 @@
+/**
+ * @fileOverview A view renderer based on a simple configuration object.
+ * @author Keith Showalter {@link https://github.com/kshowalter}
+ * @version 0.1.0
+ */
+
+
+/** @module SimpleDOM */
 var $ = require('SimpleDOM');
 
-var mkDOM = function mkDOM(config, dispatch){
+/**
+* mkDOM - Makes DOM Element from a ConfigDOM config object
+*
+* @param  {object} config ConfigDOM config object
+* @return {element} DOM Element
+*/
+var mkDOM = function mkDOM(config){
   var e = $(config.tag);
   var _id = config._id || 'r';
   config.title = _id;
@@ -11,14 +25,16 @@ var mkDOM = function mkDOM(config, dispatch){
       e.text(config[name]);
     } else if( name === 'children'){
       config[name].forEach(function(child,i){
-        if( child.constructor === Object ){ // type = 'config';
-          child._id = _id + '.' + i
-          e.append( mkDOM(child, dispatch) );
-        } else if( child.constructor === String ){ // type = 'textNode';
-          child = document.createTextNode(child);
-          e.append( child );
-        } else if( child.constructor.prototype === HTMLElement ) { // type = 'element';
-          e.append( child );
+        if( child !== undefined ){
+          if( child.constructor === Object ){ // type = 'config';
+            child._id = _id + '.' + i
+            e.append( mkDOM(child) );
+          } else if( child.constructor === String ){ // type = 'textNode';
+            child = document.createTextNode(child);
+            e.append( child );
+          } else if( child.constructor.prototype === HTMLElement ) { // type = 'element';
+            e.append( child );
+          }
         }
       });
     } else if( name === 'append'){
@@ -35,7 +51,15 @@ var mkDOM = function mkDOM(config, dispatch){
   return e;
 };
 
-module.exports = function(id){ // DOM id
+
+
+/**
+* module - description
+* @param  {string} id id of the parent element
+* @return {object} ConfigDOM object
+*/
+export default function(){
+  //module.exports = function(id){ // DOM id
   var C = {
     anchorID: id,
     dom: $(id),

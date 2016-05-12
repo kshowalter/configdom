@@ -1,13 +1,23 @@
 {
   "name": "configDOM",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "An experimental View library.",
-  "main": "index.js",
+  "main": "./src/index.js",
   "author": "Ketih Showalter",
   "license": "BSD-2-Clause",
-  "keywords": ["DOM"],
-  "repository" : {
+  "keywords": [
+    "DOM"
+  ],
+  "repository": {
     "type": "git",
     "url": "git@github.com:kshowalter/configdom.git"
+  },
+  "scripts": {
+    "docs": "jsdoc -c jsdoc.json",
+    "esdocs": "esdoc -c esdoc.json"
+  },
+  "devDependencies": {
+    "docdash": "^0.3.0",
+    "minami": "^1.1.1"
   }
 }
