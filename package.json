@@ -13,8 +13,11 @@
     "url": "git@github.com:kshowalter/configdom.git"
   },
   "scripts": {
-    "docs": "jsdoc -c jsdoc.json",
+    "docs": "rm ./docs/* -rf && jsdoc -c jsdoc.json",
     "esdocs": "esdoc -c esdoc.json"
+  },
+  "dependencies": {
+    "simpledom": "git+https://github.com/kshowalter/SimpleDOM.git"
   },
   "devDependencies": {
     "docdash": "^0.3.0",
