@@ -8,9 +8,10 @@
 /** @module SimpleDOM */
 var $ = require('SimpleDOM');
 
+
 /**
 * mkDOM - Makes DOM Element from a ConfigDOM config object
-*
+* @function
 * @param  {object} config ConfigDOM config object
 * @return {element} DOM Element
 */
@@ -54,11 +55,13 @@ var mkDOM = function mkDOM(config){
 
 
 /**
-* module - description
-* @param  {string} id id of the parent element
-* @return {object} ConfigDOM object
-*/
-export default function(){
+ * ConfigDOM constructor
+ * @exports test
+ * @constructor ConfigDOM
+ * @param  {string} id id of the parent element
+ * @return {object} ConfigDOM object
+ */
+module.exports = function(id){
   //module.exports = function(id){ // DOM id
   var C = {
     anchorID: id,
