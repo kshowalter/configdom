@@ -6,7 +6,7 @@
 
 
 /** @module SimpleDOM */
-var $ = require('SimpleDOM');
+var $ = require('simpledom');
 
 
 /**
