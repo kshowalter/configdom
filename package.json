@@ -1,5 +1,5 @@
 {
-  "name": "configDOM",
+  "name": "configdom",
   "version": "0.1.0",
   "description": "An experimental View library.",
   "main": "./src/index.js",
