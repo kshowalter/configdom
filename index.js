@@ -18,7 +18,7 @@ var $ = require('simpledom');
 var mkDOM = function mkDOM(config){
   var e = $(config.tag);
   var _id = config._id || 'r';
-  config.title = _id;
+  config['data_id'] = _id;
 
   for( var name in config){
     //console.log(name);
