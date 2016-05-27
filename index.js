@@ -16,7 +16,6 @@ var $ = require('simpledom');
 * @return {element} DOM Element
 */
 var mkDOM = function(config, oldConfig){
-  this.numElementsChanged++;
   var _id = config._id;
   var parent_id = _id.split('.').slice(0,-1).join('.');
 
@@ -111,13 +110,18 @@ module.exports = function(id){
       'r': $(id)
     },
     mkDOM: mkDOM,
-    numElementsChanged: 0,
     load: function(newConfig){
-      if( newConfig.constructor === Object){}
-      newConfig._id = 'r.0';
-      this.numElementsChanged = 0;
-      this.mkDOM(newConfig, this.config);
-      console.log(this.numElementsChanged);
+      if( newConfig.constructor === Object ){
+        newConfig._id = 'r.0';
+        this.mkDOM(newConfig, this.config);
+      } else if(newConfig.constructor === Array ){
+        for( var i = 0; i < newConfig.length; i++ ){
+          newConfig[i]._id = 'r.'+i;
+          this.mkDOM(newConfig[i], this.config);
+        }
+      } else {
+        console.log('Invalid DOM config.');
+      }
     }
   };
 
