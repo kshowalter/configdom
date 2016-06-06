@@ -81,7 +81,8 @@ var mkDOM = function(config, oldConfig){
         } else if( child.constructor === String ){
           child = document.createTextNode(child);
           e.append( child );
-        } else if( child.constructor.prototype === HTMLElement ) {
+        } else if( child.constructor.prototype === HTMLElement || child.constructor.prototype === SVGGraphicsElement ) {
+          console.log('raw element', child);
           e.append( child );
         }
       }
