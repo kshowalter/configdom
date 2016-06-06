@@ -81,9 +81,11 @@ var mkDOM = function(config, oldConfig){
         } else if( child.constructor === String ){
           child = document.createTextNode(child);
           e.append( child );
-        } else if( child.constructor.prototype === HTMLElement || child.constructor.prototype === SVGGraphicsElement ) {
-          console.log('raw element', child);
+        //} else if( child.constructor.prototype === HTMLElement || child.constructor.prototype === SVGSVGElement ) {
+        } else if( child.constructor.prototype === HTMLElement || child instanceof SVGElement ) {
           e.append( child );
+        } else {
+          console.warn('??? ', child);
         }
       }
     }, this);
