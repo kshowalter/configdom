@@ -9,90 +9,87 @@
 var $ = require('simpledom');
 
 
+var configChanged = function(newConfig, oldConfig){
+  if( newConfig !== oldConfig ){
+    return true;
+  } else if( newConfig.tag !== oldConfig.tag ){
+    return true;
+  } else if( newConfig.props !== oldConfig.props ){
+    return true;
+  } else if( newConfig.children !== oldConfig.children ){
+    return true;
+  } else {
+    return false;
+  }
+};
+
+var mkNode = function(config){
+  var node;
+  if( config.constructor === Object ){ // CONFIG
+    node = $(config.tag);
+    if( config.props ){
+      for( var name in config.props ){
+        node.attr(name, config.props[name]);
+      }
+    }
+    if( config.text ){
+      node.text( config.text );
+    }
+  } else if( config.constructor === String ){ // TEXT NODE
+    node = document.createTextNode(config);
+  } else if( config.constructor.prototype === HTMLElement || config instanceof SVGElement ) { // NODE ELEMENT
+    node = config;
+  } else {
+    console.warn('node config not recognized:', config);
+    node = undefined;
+  }
+  return node;
+}
+
+
 /**
 * mkDOM - Makes DOM Element from a ConfigDOM config object
 * @function
 * @param  {object} config ConfigDOM config object
 * @return {element} DOM Element
 */
-var mkDOM = function(config, oldConfig){
-  var _id = config._id;
-  var parent_id = _id.split('.').slice(0,-1).join('.');
+var mkDOM = function mkDOM(parentNode, newConfig, oldConfig){
+  //var _id = config._id;
+  //var parent_id = _id.split('.').slice(0,-1).join('.');
 
-  var dirty = false;
-  var dirtyChildren = false;
-  if( config !== oldConfig ){
-    dirty = true;
-    if( config['children'] ){
-      dirtyChildren = true;
-    }
-  } else {
-    for( var name in config ){
-      if( config[name] !== oldConfig[name] ){
-        if( name === 'children' ){
-          dirtyChildren = true;
-        } else {
-          dirty = true;
-        }
-      }
-    }
-    if( config['children'] && config['children'].length !== oldConfig['children'].length ){
-      dirtyChildren = true;
-    }
+  //var oldNode = this.elements[_id];
+  //var newNode;
+
+  console.log('#config ', newConfig, oldConfig);
+
+  var newNode;
+
+  if ( newConfig && !oldConfig ) { // NEW
+    newNode = mkNode(newConfig);
+    newConfig.node = newNode;
+    parentNode.append(newNode);
+  } else if( !newConfig && oldConfig ){ // DELETE
+    oldConfig.node.elem.parentNode.removeChild(oldConfig.node.elem);
+  } else if( configChanged(newConfig, oldConfig) ){ // CHANGE
+    newNode = mkNode(newConfig);
+    newConfig.node = newNode;
+    oldConfig.node.elem.parentNode.replaceChild(newConfig.node.elem, oldConfig.node.elem);
+  } else if( newConfig ){ // CHECK
+    console.log('SAME');
   }
 
-  if( dirty ){
-    var e = $(config.tag);
-    var oldE = this.elements[_id];
-    if( ! oldE ){
-      this.elements[parent_id].append( e );
-    } else {
-      oldE.elem.parentNode.replaceChild(e.elem, oldE.elem);
-    }
-    this.elements[_id] = e;
-    for( var name in config ){
-      if( name === 'children'){
-        continue;
-      } else if( name === 'text'){
-        e.text(config[name]);
-      } else if( name === 'append'){
-        config[name].forEach(function(elem){
-          e.append( elem );
-        });
-      } else if( name === 'textNode'){
-        e.append( config[name] );
-      } else {
-        e.attr(name, config[name]);
-      }
-    }
 
+  var newLength = ( newConfig && newConfig.children && newConfig.children.length ) || 0;
+  var oldLength = ( oldConfig && oldConfig.children && oldConfig.children.length ) || 0;
+
+  for (var i = 0; i < newLength || i < oldLength; i++) {
+    var oldChild = oldConfig && oldConfig.children[i];
+    var newChild = newConfig && newConfig.children[i];
+    var config = mkDOM(newNode, newChild, oldChild);
+    newConfig.children[i] = config;
   }
 
-  if( dirtyChildren ){
-    var e = this.elements[_id];
-    e.clear();
-
-    config['children'].forEach(function(child,i){
-      if( child !== undefined ){
-        if( child.constructor === Object ){
-          child._id = _id + '.' + i;
-
-          e.append( this.mkDOM(child, {} ));
-        } else if( child.constructor === String ){
-          child = document.createTextNode(child);
-          e.append( child );
-        //} else if( child.constructor.prototype === HTMLElement || child.constructor.prototype === SVGSVGElement ) {
-        } else if( child.constructor.prototype === HTMLElement || child instanceof SVGElement ) {
-          e.append( child );
-        } else {
-          console.warn('??? ', child);
-        }
-      }
-    }, this);
-
-  }
-
-  return e;
+  return newConfig;
 };
 
 
@@ -108,18 +105,19 @@ module.exports = function(id){
   //module.exports = function(id){ // DOM id
   var C = {
     anchorID: id,
-    config: {},
-    elements: {
-      'r': $(id)
-    },
-    mkDOM: mkDOM,
+    config: undefined,
+    //elements: {
+    //  'r': $(id)
+    //},
+    rootNode: $(id),
+    //mkDOM: mkDOM,
     load: function(newConfig){
       if( newConfig.constructor === Object ){
-        newConfig._id = 'r.0';
-        this.mkDOM(newConfig, this.config);
+        //newConfig._id = 'r.0';
+        this.config = mkDOM(this.rootNode, newConfig, this.config);
       } else if(newConfig.constructor === Array ){
         for( var i = 0; i < newConfig.length; i++ ){
-          newConfig[i]._id = 'r.'+i;
+          //newConfig[i]._id = 'r.'+i;
           this.mkDOM(newConfig[i], this.config);
         }
       } else {
