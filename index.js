@@ -7,8 +7,6 @@
 
 /** @module SimpleDOM */
 var $ = require('simpledom');
-var SVG_attr = require('./svg');
-console.log(SVG_attr);
 
 
 var configChanged = function(newConfig, oldConfig){
@@ -48,39 +46,7 @@ var mkNode = function(config){
   return sdom;
 };
 
-var SVGize = function(config){
-  console.log('svg', config);
-  config.props = config.props || {};
 
-  if( config.tag === 'svg' ){
-    config.props['xmlns'] = 'http://www.w3.org/2000/svg';
-    config.props['xmlns:xlink'] = 'http://www.w3.org/1999/xlink';
-  }
-
-  config.meta = config.meta || {};
-  config.meta.namespaceURI = 'http://www.w3.org/2000/svg';
-  config.meta.layer_attr = config.meta.layer_attr || SVG_attr.layer_attr;
-  config.meta.fonts = config.meta.fonts || SVG_attr.fonts;
-
-  config.meta.layerName = config.meta.layerName || 'base';
-  config.meta.fontName = config.meta.fontName || 'base';
-
-  if( ! (['svg'].indexOf(config.tag)+1) ){
-    var layer = config.meta.layer_attr[config.meta.layerName];
-    for( var name in layer ){
-      config.props[name] = layer[name];
-    }
-  }
-
-  if( ['text', 'textPath', 'title', 'tref', 'tspan'].indexOf(config.tag)+1 ){
-    var font = config.meta.fonts[config.meta.fontName];
-    for( var name in font ){
-      config.props[name] = font[name];
-    }
-  }
-
-  return config;
-};
 
 //if( isSVG ){
 //  props.xmlns = props.xmlns || 'http://www.w3.org/2000/svg';
@@ -99,14 +65,6 @@ var mkDOM = function mkDOM(parentConfig, newConfig, oldConfig){
   //console.log(parentConfig.sdom.elem, parentConfig.sdom.elem.namespaceURI);
   newConfig.meta = newConfig.meta || {};
 
-  console.log(newConfig);
-  if( newConfig.constructor === Object &&
-      ( newConfig.tag.toLocaleLowerCase()  === 'svg' ||
-        parentConfig.meta.namespaceURI === 'http://www.w3.org/2000/svg' )
-    ){
-    newConfig = SVGize(newConfig);
-    //console.log(newConfig);
-  }
   //console.log(parentConfig.sdom.elem, parentConfig.sdom.elem.namespaceURI, newConfig.meta.namespaceURI);
   //var parent_id = _id.split('.').slice(0,-1).join('.');
 
