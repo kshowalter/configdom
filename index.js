@@ -9,38 +9,38 @@
 var $ = require('simpledom');
 
 
-var configChanged = function(newConfig, oldConfig){
-  if( newConfig !== oldConfig ){
+var configChanged = function(newSpecs, oldSpecs){
+  if( newSpecs !== oldSpecs ){
     return true;
-  } else if( newConfig.tag !== oldConfig.tag ){
+  } else if( newSpecs.tag !== oldSpecs.tag ){
     return true;
-  } else if( newConfig.props !== oldConfig.props ){
+  } else if( newSpecs.props !== oldSpecs.props ){
     return true;
-  } else if( newConfig.children !== oldConfig.children ){
+  } else if( newSpecs.children !== oldSpecs.children ){
     return true;
   } else {
     return false;
   }
 };
 
-var mkNode = function(config){
+var mkNode = function(specs){
   var sdom;
-  if( config.constructor === Object ){ // CONFIG
-    sdom = $(config.tag, {namespaceURI: config.meta.namespaceURI});
-    if( config.props ){
-      for( var name in config.props ){
-        sdom.attr(name, config.props[name]);
+  if( specs.constructor === Object ){ // CONFIG
+    sdom = $(specs.tag, {namespaceURI: specs.meta.namespaceURI});
+    if( specs.props ){
+      for( var name in specs.props ){
+        sdom.attr(name, specs.props[name]);
       }
     }
-    if( config.text ){
-      sdom.text( config.text );
+    if( specs.text ){
+      sdom.text( specs.text );
     }
-  } else if( config.constructor === String ){ // TEXT NODE
-    sdom = document.createTextNode(config);
-  } else if( config.constructor.prototype === HTMLElement || config instanceof SVGElement ) { // NODE ELEMENT
-    sdom = config;
+  } else if( specs.constructor === String ){ // TEXT NODE
+    sdom = document.createTextNode(specs);
+  } else if( specs.constructor.prototype === HTMLElement || specs instanceof SVGElement ) { // NODE ELEMENT
+    sdom = specs;
   } else {
-    console.warn('node config not recognized:', config);
+    console.warn('node specs not recognized:', specs);
     sdom = undefined;
   }
   return sdom;
@@ -55,51 +55,51 @@ var mkNode = function(config){
 
 
 /**
-* mkDOM - Makes DOM Element from a ConfigDOM config object
+* mkDOM - Makes DOM Element from a ConfigDOM specs object
 * @function
-* @param  {object} config ConfigDOM config object
+* @param  {object} specs ConfigDOM specs object
 * @return {element} DOM Element
 */
-var mkDOM = function mkDOM(parentConfig, newConfig, oldConfig){
-  //var _id = config._id;
-  //console.log(parentConfig.sdom.elem, parentConfig.sdom.elem.namespaceURI);
-  newConfig.meta = newConfig.meta || {};
+var mkDOM = function mkDOM(parentSpecs, newSpecs, oldSpecs){
+  //var _id = specs._id;
+  //console.log(parentSpecs.sdom.elem, parentSpecs.sdom.elem.namespaceURI);
+  newSpecs.meta = newSpecs.meta || {};
 
-  //console.log(parentConfig.sdom.elem, parentConfig.sdom.elem.namespaceURI, newConfig.meta.namespaceURI);
+  //console.log(parentSpecs.sdom.elem, parentSpecs.sdom.elem.namespaceURI, newSpecs.meta.namespaceURI);
   //var parent_id = _id.split('.').slice(0,-1).join('.');
 
   //var oldNode = this.elements[_id];
   //var newNode;
 
-  //console.log('#config ', newConfig, oldConfig);
+  //console.log('#specs ', newSpecs, oldSpecs);
 
 
   var sdom;
-  if ( newConfig && !oldConfig ) { // NEW
-    sdom = mkNode(newConfig);
-    newConfig.sdom = sdom;
-    parentConfig.sdom.append(sdom);
-  } else if( !newConfig && oldConfig ){ // DELETE
-    oldConfig.sdom.elem.parentNode.removeChild(oldConfig.sdom.elem);
-  } else if( configChanged(newConfig, oldConfig) ){ // CHANGE
-    sdom = mkNode(newConfig);
-    newConfig.sdom = sdom;
-    oldConfig.sdom.elem.parentNode.replaceChild(newConfig.sdom.elem, oldConfig.sdom.elem);
-  } else if( newConfig ){ // CHECK
+  if ( newSpecs && !oldSpecs ) { // NEW
+    sdom = mkNode(newSpecs);
+    newSpecs.sdom = sdom;
+    parentSpecs.sdom.append(sdom);
+  } else if( !newSpecs && oldSpecs ){ // DELETE
+    oldSpecs.sdom.elem.parentNode.removeChild(oldSpecs.sdom.elem);
+  } else if( configChanged(newSpecs, oldSpecs) ){ // CHANGE
+    sdom = mkNode(newSpecs);
+    newSpecs.sdom = sdom;
+    oldSpecs.sdom.elem.parentNode.replaceChild(newSpecs.sdom.elem, oldSpecs.sdom.elem);
+  } else if( newSpecs ){ // CHECK
     console.log('SAME');
   }
 
-  var newLength = ( newConfig && newConfig.children && newConfig.children.length ) || 0;
-  var oldLength = ( oldConfig && oldConfig.children && oldConfig.children.length ) || 0;
+  var newLength = ( newSpecs && newSpecs.children && newSpecs.children.length ) || 0;
+  var oldLength = ( oldSpecs && oldSpecs.children && oldSpecs.children.length ) || 0;
 
   for (var i = 0; i < newLength || i < oldLength; i++) {
-    var oldChild = oldConfig && oldConfig.children[i];
-    var newChild = newConfig && newConfig.children[i];
-    var config = mkDOM(newConfig, newChild, oldChild);
-    newConfig.children[i] = config;
+    var oldChild = oldSpecs && oldSpecs.children[i];
+    var newChild = newSpecs && newSpecs.children[i];
+    var specs = mkDOM(newSpecs, newChild, oldChild);
+    newSpecs.children[i] = specs;
   }
 
-  return newConfig;
+  return newSpecs;
 };
 
 
@@ -115,26 +115,26 @@ module.exports = function(id){
   //module.exports = function(id){ // DOM id
   var C = {
     anchorID: id,
-    config: undefined,
+    specs: undefined,
     //elements: {
     //  'r': $(id)
     //},
     rootSDOM: $(id),
-    rootConfig: {
+    rootSpecs: {
       sdom: $(id),
-      meta: {},
+      meta: {}
     },
-    load: function(newConfig){
-      if( newConfig.constructor === Object ){
-        //newConfig._id = 'r.0';
-        this.config = mkDOM(this.rootConfig, newConfig, this.config);
-      } else if(newConfig.constructor === Array ){
-        for( var i = 0; i < newConfig.length; i++ ){
-          //newConfig[i]._id = 'r.'+i;
-          this.mkDOM(newConfig[i], this.config);
+    load: function(newSpecs){
+      if( newSpecs.constructor === Object ){
+        //newSpecs._id = 'r.0';
+        this.specs = mkDOM(this.rootSpecs, newSpecs, this.specs);
+      } else if(newSpecs.constructor === Array ){
+        for( var i = 0; i < newSpecs.length; i++ ){
+          //newSpecs[i]._id = 'r.'+i;
+          this.mkDOM(newSpecs[i], this.specs);
         }
       } else {
-        console.log('Invalid DOM config.');
+        console.log('Invalid DOM specs.');
       }
     }
   };
