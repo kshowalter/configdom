@@ -81,7 +81,7 @@ var mkDOM = function mkDOM(parentSpecs, newSpecs, oldSpecs){
     parentSpecs.sdom.append(sdom);
   } else if( !newSpecs && oldSpecs ){ // DELETE
     oldSpecs.sdom.elem.parentNode.removeChild(oldSpecs.sdom.elem);
-  } else if( configChanged(newSpecs, oldSpecs) ){ // CHANGE
+  } else if( newSpecs && configChanged(newSpecs, oldSpecs) ){ // CHANGE
     sdom = mkNode(newSpecs);
     newSpecs.sdom = sdom;
     oldSpecs.sdom.elem.parentNode.replaceChild(newSpecs.sdom.elem, oldSpecs.sdom.elem);
