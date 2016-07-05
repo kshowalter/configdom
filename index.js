@@ -24,6 +24,7 @@ var configChanged = function(newSpecs, oldSpecs){
 };
 
 var mkNode = function(specs){
+
   specs.meta = specs.meta || {};
   var sdom;
   if( specs.constructor === Object ){ // CONFIG
@@ -36,8 +37,6 @@ var mkNode = function(specs){
     if( specs.text ){
       sdom.text( specs.text );
     }
-  } else if( specs.constructor === String ){ // TEXT NODE
-    sdom = document.createTextNode(specs);
   } else if( specs.constructor.prototype === HTMLElement || specs instanceof SVGElement ) { // NODE ELEMENT
     sdom = specs;
   } else {
@@ -74,6 +73,14 @@ var mkDOM = function mkDOM(newParentSpecs, newSpecs, oldParentSpecs, oldSpecs){
 
   //console.log('#specs ', newSpecs, oldSpecs);
 
+  if( newSpecs && newSpecs.constructor === String ){ // TEXT NODE
+    //sdom = document.createTextNode(specs);
+    newSpecs = {
+      tag: 'span',
+      text: newSpecs
+    };
+  }
+
 
   var sdom;
   if ( newSpecs && !oldSpecs ) { // NEW
@@ -99,8 +106,12 @@ var mkDOM = function mkDOM(newParentSpecs, newSpecs, oldParentSpecs, oldSpecs){
     var newChild = newSpecs && newSpecs.children && newSpecs.children[i];
     //var oldChild = ( oldSpecs && oldSpecs.children && oldSpecs.children[i] ) || undefined;
     //var newChild = ( newSpecs && newSpecs.children && newSpecs.children[i] ) || undefined;
-    var specs = mkDOM(newSpecs, newChild, oldChild);
-    newSpecs.children[i] = specs;
+    //console.log(newSpecs, newChild, oldSpecs, oldChild);
+    var specs = mkDOM(newSpecs, newChild, oldSpecs, oldChild);
+    if( newSpecs ){
+      newSpecs.children = newSpecs.children || {};
+      newSpecs.children[i] = specs;
+    }
   }
 
   return newSpecs;
