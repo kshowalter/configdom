@@ -140,6 +140,10 @@ module.exports = function(id){
       meta: {}
     },
     load: function(newSpecs){
+      if( ! newSpecs ){
+        console.warn('specDOML: no specs provided');
+        return false;
+      }
       if( newSpecs.constructor === Object ){
         //newSpecs._id = 'r.0';
         this.specs = mkDOM(this.rootSpecs, newSpecs, this.rootSpecs, this.specs);
