@@ -24,7 +24,6 @@ var configChanged = function(newSpecs, oldSpecs){
 };
 
 var mkNode = function(specs){
-
   specs.meta = specs.meta || {};
   var sdom;
   if( specs.constructor === Object ){ // CONFIG
@@ -74,11 +73,11 @@ var mkDOM = function mkDOM(newParentSpecs, newSpecs, oldParentSpecs, oldSpecs){
   //console.log('#specs ', newSpecs, oldSpecs);
 
   if( newSpecs && newSpecs.constructor === String ){ // TEXT NODE
-    //sdom = document.createTextNode(specs);
-    newSpecs = {
-      tag: 'span',
-      text: newSpecs
-    };
+    newSpecs = document.createTextNode(newSpecs);
+    //newSpecs = {
+    //  tag: 'span',
+    //  text: newSpecs
+    //};
   }
 
 
