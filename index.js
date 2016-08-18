@@ -24,10 +24,16 @@ var configChanged = function(newSpecs, oldSpecs){
 };
 
 var mkNode = function(specs){
-  specs.meta = specs.meta || {};
   var sdom;
+
+
   if( specs.constructor === Object ){ // CONFIG
-    sdom = $(specs.tag, {namespaceURI: specs.meta.namespaceURI});
+    specs.meta = specs.meta || {};
+    sdom = $(specs.tag, {
+      namespaceURI: specs.meta.namespaceURI,
+      textNode: specs.tag === 'textNode',
+      text: specs.text
+    });
     if( specs.props ){
       for( var name in specs.props ){
         sdom.attr(name, specs.props[name]);
@@ -40,6 +46,7 @@ var mkNode = function(specs){
     sdom = specs;
   } else {
     console.warn('node specs not recognized:', specs);
+    sdom = document.createTextNode(specs);
     sdom = undefined;
   }
   return sdom;
@@ -60,41 +67,37 @@ var mkNode = function(specs){
 * @return {element} DOM Element
 */
 var mkDOM = function mkDOM(newParentSpecs, newSpecs, oldParentSpecs, oldSpecs){
-  //var _id = specs._id;
-  //console.log(newParentSpecs.sdom.elem, newParentSpecs.sdom.elem.namespaceURI);
-  //console.log(newParentSpecs, newSpecs, oldParentSpecs, oldSpecs);
 
-  //console.log(newParentSpecs.sdom.elem, newParentSpecs.sdom.elem.namespaceURI, newSpecs.meta.namespaceURI);
-  //var parent_id = _id.split('.').slice(0,-1).join('.');
-
-  //var oldNode = this.elements[_id];
-  //var newNode;
-
-  //console.log('#specs ', newSpecs, oldSpecs);
-
-  if( newSpecs && newSpecs.constructor === String ){ // TEXT NODE
-    newSpecs = document.createTextNode(newSpecs);
-    //newSpecs = {
-    //  tag: 'span',
-    //  text: newSpecs
-    //};
+  if(newSpecs){
+    if( newSpecs.constructor === Number ){
+      newSpecs = newSpecs.toString();
+    }
+    if( newSpecs.constructor === String ){
+      //sdom = document.createTextNode(specs);
+      newSpecs = {
+        tag: 'textNode',
+        text: newSpecs
+      };
+    }
   }
 
-
   var sdom;
-  if ( newSpecs && !oldSpecs ) { // NEW
+  if( newSpecs && !oldSpecs ) { // NEW
     sdom = mkNode(newSpecs);
-    newSpecs.sdom = sdom;
     newParentSpecs.sdom.append(sdom);
   } else if( !newSpecs && oldSpecs ){ // DELETE
     oldParentSpecs.sdom.elem.removeChild(oldSpecs.sdom.elem);
   } else if( newSpecs && configChanged(newSpecs, oldSpecs) ){ // CHANGE
     oldParentSpecs.sdom.elem.removeChild(oldSpecs.sdom.elem);
     sdom = mkNode(newSpecs);
-    newSpecs.sdom = sdom;
     newParentSpecs.sdom.append(sdom);
   } else if( newSpecs ){ // CHECK
     console.log('SAME');
+  }
+
+  if( newSpecs && newSpecs.constructor === Object ){
+    newSpecs.children = newSpecs.children || {};
+    if( sdom ) newSpecs.sdom = sdom;
   }
 
   var newLength = ( newSpecs && newSpecs.children && newSpecs.children.length ) || 0;
@@ -107,8 +110,7 @@ var mkDOM = function mkDOM(newParentSpecs, newSpecs, oldParentSpecs, oldSpecs){
     //var newChild = ( newSpecs && newSpecs.children && newSpecs.children[i] ) || undefined;
     //console.log(newSpecs, newChild, oldSpecs, oldChild);
     var specs = mkDOM(newSpecs, newChild, oldSpecs, oldChild);
-    if( newSpecs ){
-      newSpecs.children = newSpecs.children || {};
+    if( newSpecs && newSpecs.constructor === Object ){
       newSpecs.children[i] = specs;
     }
   }
