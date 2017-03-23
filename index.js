@@ -151,7 +151,7 @@ module.exports = function(id){
       } else if(newSpecs.constructor === Array ){
         for( var i = 0; i < newSpecs.length; i++ ){
           //newSpecs[i]._id = 'r.'+i;
-          this.mkDOM(this.rootSpecs, newSpecs[i], this.rootSpecs, this.specs);
+          mkDOM(this.rootSpecs, newSpecs[i], this.rootSpecs, this.specs);
         }
       } else {
         console.log('Invalid DOM specs.');
