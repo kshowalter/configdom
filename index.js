@@ -148,11 +148,15 @@ module.exports = function(id){
       if( newSpecs.constructor === Object ){
         //newSpecs._id = 'r.0';
         this.specs = mkDOM(this.rootSpecs, newSpecs, this.rootSpecs, this.specs);
-      } else if(newSpecs.constructor === Array ){
+      } else if( newSpecs.constructor === Array ){
+        newSpecs = {
+          tag: 'div',
+          children: newSpecs,
+        };
         for( var i = 0; i < newSpecs.length; i++ ){
-          //newSpecs[i]._id = 'r.'+i;
-          mkDOM(this.rootSpecs, newSpecs[i], this.rootSpecs, this.specs);
+          newSpecs.children.push( mkDOM(this.rootSpecs, newSpecs[i], this.rootSpecs, this.specs) );
         }
+        this.specs = mkDOM(this.rootSpecs, newSpecs, this.rootSpecs, this.specs);
       } else {
         console.log('Invalid DOM specs.');
       }
