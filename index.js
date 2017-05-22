@@ -84,13 +84,21 @@ var mkDOM = function mkDOM(newParentSpecs, newSpecs, oldParentSpecs, oldSpecs){
   var sdom;
   if( newSpecs && !oldSpecs ) { // NEW
     sdom = mkNode(newSpecs);
-    newParentSpecs.sdom.append(sdom);
+    if(newParentSpecs.sdom){
+      newParentSpecs.sdom.append(sdom);
+    }
   } else if( !newSpecs && oldSpecs ){ // DELETE
-    oldParentSpecs.sdom.elem.removeChild(oldSpecs.sdom.elem);
+    if(oldParentSpecs.sdom){
+      oldParentSpecs.sdom.elem.removeChild(oldSpecs.sdom.elem);
+    }
   } else if( newSpecs && configChanged(newSpecs, oldSpecs) ){ // CHANGE
-    oldParentSpecs.sdom.elem.removeChild(oldSpecs.sdom.elem);
+    if(oldParentSpecs.sdom){
+      oldParentSpecs.sdom.elem.removeChild(oldSpecs.sdom.elem);
+    }
     sdom = mkNode(newSpecs);
-    newParentSpecs.sdom.append(sdom);
+    if(newParentSpecs.sdom){
+      newParentSpecs.sdom.append(sdom);
+    }
   } else if( newSpecs ){ // CHECK
     console.log('SAME');
   }
