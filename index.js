@@ -88,11 +88,11 @@ var mkDOM = function mkDOM(newParentSpecs, newSpecs, oldParentSpecs, oldSpecs){
       newParentSpecs.sdom.append(sdom);
     }
   } else if( !newSpecs && oldSpecs ){ // DELETE
-    if(oldParentSpecs.sdom){
+    if( oldParentSpecs.sdom && oldSpecs.sdom ){
       oldParentSpecs.sdom.elem.removeChild(oldSpecs.sdom.elem);
     }
   } else if( newSpecs && configChanged(newSpecs, oldSpecs) ){ // CHANGE
-    if(oldParentSpecs.sdom){
+    if( oldParentSpecs.sdom && oldSpecs.sdom ){
       oldParentSpecs.sdom.elem.removeChild(oldSpecs.sdom.elem);
     }
     sdom = mkNode(newSpecs);
@@ -100,7 +100,7 @@ var mkDOM = function mkDOM(newParentSpecs, newSpecs, oldParentSpecs, oldSpecs){
       newParentSpecs.sdom.append(sdom);
     }
   } else if( newSpecs ){ // CHECK
-    console.log('SAME');
+    //console.log('SAME');
   }
 
   if( newSpecs && newSpecs.constructor === Object ){
