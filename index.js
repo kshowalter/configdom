@@ -26,8 +26,9 @@ var configChanged = function(newSpecs, oldSpecs){
 var mkNode = function(specs){
   var sdom;
 
-
-  if( specs.constructor === Object ){ // CONFIG
+  if( specs.tag === 'elem' ) { // NODE ELEMENT
+    sdom = $(specs.elem);
+  } else if( specs.constructor === Object ){ // CONFIG
     specs.meta = specs.meta || {};
     sdom = $(specs.tag, {
       namespaceURI: specs.meta.namespaceURI,
@@ -43,21 +44,16 @@ var mkNode = function(specs){
       sdom.text( specs.text );
     }
   } else if( specs.constructor.prototype === HTMLElement || specs instanceof SVGElement ) { // NODE ELEMENT
-    sdom = specs;
+    sdom = $(specs);
   } else {
     console.warn('node specs not recognized:', specs);
-    sdom = document.createTextNode(specs);
+    //sdom = document.createTextNode(specs);
     sdom = undefined;
   }
   return sdom;
 };
 
 
-
-//if( isSVG ){
-//  props.xmlns = props.xmlns || 'http://www.w3.org/2000/svg';
-//  props['xmlns:xlink'] = props['xmlns:xlink'] || 'http://www.w3.org/1999/xlink';
-//}
 
 
 /**
@@ -79,26 +75,23 @@ var mkDOM = function mkDOM(newParentSpecs, newSpecs, oldParentSpecs, oldSpecs){
         text: newSpecs
       };
     }
+    if( newSpecs.constructor.prototype === HTMLElement || newSpecs instanceof SVGElement ) { // NODE ELEMENT
+      newSpecs = {
+        tag: 'elem',
+        elem: newSpecs
+      };
+    }
   }
-
   var sdom;
   if( newSpecs && !oldSpecs ) { // NEW
     sdom = mkNode(newSpecs);
-    if(newParentSpecs.sdom){
-      newParentSpecs.sdom.append(sdom);
-    }
+    newParentSpecs.sdom.append(sdom);
   } else if( !newSpecs && oldSpecs ){ // DELETE
-    if( oldParentSpecs.sdom && oldSpecs.sdom ){
-      oldParentSpecs.sdom.elem.removeChild(oldSpecs.sdom.elem);
-    }
+    oldParentSpecs.sdom.elem.removeChild(oldSpecs.sdom.elem);
   } else if( newSpecs && configChanged(newSpecs, oldSpecs) ){ // CHANGE
-    if( oldParentSpecs.sdom && oldSpecs.sdom ){
-      oldParentSpecs.sdom.elem.removeChild(oldSpecs.sdom.elem);
-    }
+    oldParentSpecs.sdom.elem.removeChild(oldSpecs.sdom.elem);
     sdom = mkNode(newSpecs);
-    if(newParentSpecs.sdom){
-      newParentSpecs.sdom.append(sdom);
-    }
+    newParentSpecs.sdom.append(sdom);
   } else if( newSpecs ){ // CHECK
     //console.log('SAME');
   }
