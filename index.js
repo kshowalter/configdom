@@ -159,7 +159,9 @@ module.exports = function(target){
         this.specs = mkDOM(this.rootSpecs, newSpecs, this.rootSpecs, this.specs);
       } else {
         console.log('Invalid DOM specs.');
+        return false;
       }
+      return true;
     }
   };
 
