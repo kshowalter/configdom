@@ -1,7 +1,7 @@
 {
   "name": "specdom",
-  "version": "0.1.0",
-  "description": "An experimental View library.",
+  "version": "0.2.0",
+  "description": "An simple View library.",
   "main": "./src/index.js",
   "author": "Ketih Showalter",
   "license": "BSD-2-Clause",
@@ -10,14 +10,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:kshowalter/configdom.git"
+    "url": "git@github.com:mechkit/configdom.git"
   },
   "scripts": {
     "docs": "rm ./docs/* -rf && jsdoc -c jsdoc.json",
     "esdocs": "esdoc -c esdoc.json"
   },
   "dependencies": {
-    "simpledom": "git+https://github.com/kshowalter/SimpleDOM.git"
+    "simpledom": "git+https://github.com/mechkit/SimpleDOM.git"
   },
   "devDependencies": {
     "docdash": "^0.3.0",

@@ -1,7 +1,7 @@
 /**
 * @fileOverview A view renderer based on a simple configuration object.
-* @author Keith Showalter {@link https://github.com/kshowalter}
-* @version 0.1.0
+* @author Keith Showalter {@link https://github.com/mechkit}
+* @version 0.2.0
 */
 
 
