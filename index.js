@@ -119,22 +119,10 @@ var mkDOM = function mkDOM(newParentSpecs, newSpecs, oldParentSpecs, oldSpecs){
   return newSpecs;
 };
 
-
-
-/**
-* ConfigDOM constructor
-* @exports test
-* @constructor ConfigDOM
-* @param  {string} target id of the parent element
-* @return {object} ConfigDOM object
-*/
 module.exports = function(target){
-  //module.exports = function(id){ // DOM id
+  target = target || document.body;
   var C = {
     specs: undefined,
-    //elements: {
-    //  'r': $(target)
-    //},
     rootSDOM: $(target),
     rootSpecs: {
       sdom: $(target),
